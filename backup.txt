@@ -1,0 +1,635 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { BsPlayCircle } from "react-icons/bs";
+import { FiInstagram, FiMail, FiPhone } from "react-icons/fi";
+import { AiOutlineClose } from "react-icons/ai";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+// Import media assets for Spotify project
+import defaultLogo from "./assets/logos/spotify_logo.png";
+import spotifyVideo1 from "./assets/videos/Spotify/1-center.mp4";
+import spotifyImg1 from "./assets/images/Spotify/1-left.jpeg";
+import spotifyImg2 from "./assets/images/Spotify/1-right.jpeg";
+import spotifyImg3 from "./assets/images/Spotify/2-left.jpeg";
+import spotifyImg4 from "./assets/images/Spotify/2-right.jpeg";
+import spotifyImg5 from "./assets/images/Spotify/3-left.jpeg";
+import spotifyImg6 from "./assets/images/Spotify/3-right.jpeg";
+import spotifyImg7 from "./assets/images/Spotify/4-left.jpeg";
+import spotifyImg8 from "./assets/images/Spotify/4-right.jpeg";
+
+// Import media assets for ctrl-alt-believe project
+import ctrlAltVideo1 from "./assets/videos/ctrl-alt-believe/1-center.mp4";
+import ctrlAltImg1Left from "./assets/images/ctrl-alt-believe/1-left.jpeg";
+import ctrlAltImg1Right from "./assets/images/ctrl-alt-believe/1-right.jpeg";
+import ctrlAltImg2Left from "./assets/images/ctrl-alt-believe/2-left.jpeg";
+import ctrlAltImg2Right from "./assets/images/ctrl-alt-believe/2-right.jpeg";
+import ctrlAltImg3Left from "./assets/images/ctrl-alt-believe/3-left.jpeg";
+import ctrlAltImg3Right from "./assets/images/ctrl-alt-believe/3-right.jpeg";
+
+// Define project data array
+const projects = [
+  {
+    id: 1,
+    title: "Bookstore Interior Design",
+    date: "08.11.2024",
+    productionHouse: "Studio Designs",
+    designation: "Lead Designer",
+    details: "Modern reading spaces with cozy ambiance",
+    logo: defaultLogo,
+  },
+  {
+    id: 2,
+    title: "Apartment Renovation",
+    date: "04.03.2024",
+    productionHouse: "Urban Spaces",
+    designation: "Project Manager",
+    details: "Contemporary living space transformation project",
+    logo: defaultLogo,
+  },
+  {
+    id: 3,
+    title: "Boutique Store Facade",
+    date: "01.01.2024",
+    productionHouse: "Retail Architects",
+    designation: "Design Consultant",
+    details: "Elegant storefront with modern aesthetics",
+    logo: defaultLogo,
+  },
+  {
+    id: 4,
+    title: "Art Gallery Lighting Concept",
+    date: "27.09.2024",
+    productionHouse: "Light & Space",
+    designation: "Lighting Designer",
+    details: "Innovative lighting for artwork display",
+    logo: defaultLogo,
+  },
+  {
+    id: 5,
+    title: "Coastal Café Design",
+    date: "24.07.2024",
+    productionHouse: "Hospitality Design Co",
+    designation: "Interior Architect",
+    details: "Beachside café with tropical vibes",
+    logo: defaultLogo,
+  },
+  {
+    id: 6,
+    title: "Modern Villa Layout",
+    date: "03.02.2024",
+    productionHouse: "Luxury Homes",
+    designation: "Senior Architect",
+    details: "Luxurious contemporary residential design concept",
+    logo: defaultLogo,
+  },
+  {
+    id: 7,
+    title: "Spotify",
+    date: "03.3.2024",
+    productionHouse: "Green Spaces",
+    designation: "Landscape Designer",
+    details: "Tropical paradise with natural elements",
+    logo: defaultLogo,
+  },
+  {
+    id: 8,
+    title: "Volkswagen",
+    date: "18.02.2024",
+    productionHouse: "Wellness Design",
+    designation: "Design Lead",
+    details: "Peaceful zen-inspired meditation space design",
+    logo: defaultLogo,
+  },
+  {
+    id: 9,
+    title: "SuperDry Denim",
+    date: "05.01.2024",
+    productionHouse: "Public Works",
+    designation: "Project Architect",
+    details: "Modern heritage celebration space concept",
+    logo: defaultLogo,
+  },
+  {
+    id: 10,
+    title: "ctrl + alt + believe",
+    date: "21.06.2024",
+    productionHouse: "Educational Spaces",
+    designation: "Creative Director",
+    details: "Interactive learning environment for kids",
+    logo: defaultLogo,
+  },
+];
+
+// Main App component
+const App = () => {
+  // State for managing selected project, modals, and media index
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  // Handler for navigating to previous media in modal
+  const handlePreviousMedia = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === 0 ? mediaContent.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Handler for navigating to next media in modal
+  const handleNextMedia = () => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === mediaContent.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  // Effect to handle keyboard navigation (left/right arrows) for media modals
+  React.useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (isVideoModalOpen || isImageModalOpen) {
+        if (event.key === "ArrowLeft") {
+          handlePreviousMedia();
+        } else if (event.key === "ArrowRight") {
+          handleNextMedia();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isVideoModalOpen, isImageModalOpen]);
+
+  // Sort projects by ID in descending order (newest first)
+  const sortedProjects = [...projects].sort((a, b) => b.id - a.id);
+
+  // Handler for selecting a project
+  const handleProjectClick = (project) => {
+    setSelectedProject(project);
+  };
+
+  // Handler to reset view to home/about section
+  const resetView = () => {
+    setSelectedProject(null);
+  };
+
+  // Default media content for projects without specific media
+  const defaultMediaContent = [
+    { type: "video", src: spotifyVideo1, span: true },
+    { type: "image", src: spotifyImg1, span: false },
+    { type: "image", src: spotifyImg2, span: false },
+    { type: "image", src: spotifyImg3, span: false },
+    { type: "image", src: spotifyImg4, span: false },
+    { type: "image", src: spotifyImg5, span: false },
+    { type: "image", src: spotifyImg6, span: false },
+    { type: "image", src: spotifyImg7, span: false },
+    { type: "image", src: spotifyImg8, span: false },
+  ];
+
+  // Project-specific media content (for Spotify and ctrl-alt-believe)
+  const projectSpecificContent = {
+    7: [
+      { type: "video", src: spotifyVideo1, span: true },
+      { type: "image", src: spotifyImg1, span: false },
+      { type: "image", src: spotifyImg2, span: false },
+      { type: "image", src: spotifyImg3, span: false },
+      { type: "image", src: spotifyImg4, span: false },
+      { type: "image", src: spotifyImg5, span: false },
+      { type: "image", src: spotifyImg6, span: false },
+      { type: "image", src: spotifyImg7, span: false },
+      { type: "image", src: spotifyImg8, span: false },
+    ],
+    10: [
+      { type: "video", src: ctrlAltVideo1, span: true },
+      { type: "image", src: ctrlAltImg1Left, span: false },
+      { type: "image", src: ctrlAltImg1Right, span: false },
+      { type: "image", src: ctrlAltImg2Left, span: false },
+      { type: "image", src: ctrlAltImg2Right, span: false },
+      { type: "image", src: ctrlAltImg3Left, span: false },
+      { type: "image", src: ctrlAltImg3Right, span: false },
+    ],
+  };
+
+  // Determine which media content to display based on selected project
+  const mediaContent =
+    selectedProject && projectSpecificContent[selectedProject.id]
+      ? projectSpecificContent[selectedProject.id]
+      : defaultMediaContent;
+
+  return (
+    <>
+      {/* Inline styles for custom CSS */}
+      <style>
+        {`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      
+        .project-timeline-heading {
+          position: absolute;
+          top: 15vh;
+          right: 2vw;
+          color: #E45310;
+          font-size: 4vw;
+          font-weight: 800;
+          line-height: 1.4;
+          letter-spacing: 0.01vw;
+          font-family: 'Poppins', sans-serif;
+          text-align: left;
+        }
+      
+        .timeline-section {
+          position: relative;
+          top: 7vh;
+        }
+      
+        .vertical-strip {
+          position: fixed;
+          left: 43.2%;
+          top: 0;
+          bottom: 0;
+          width: 6.5vw;
+          height: 100%;
+          background-color: #E45310;
+          z-index: 0;
+          transform: translateX(-50%);
+        }
+      
+        .project-number {
+          color: #FF554B;
+          font-size: 3.5vw;
+          font-weight: bold;
+          width: 7vw;
+          text-align: center;
+          position: relative;
+          z-index: 2;
+          transition: color 0.3s ease;
+        }
+      
+        .project-number.selected {
+          color: white;
+        }
+
+        .project-details {
+          padding-left: 1.5vw;
+          transition: transform 0.3s ease;
+          color: #F5F5F5;
+          margin-left: 1vw;
+        }
+      
+        .project-details.selected {
+          color: white;
+        }
+      
+        .project-item {
+          display: flex;
+          align-items: flex-start;
+          position: relative;
+        }
+      
+        .project-item:hover .project-details {
+          transform: scale(1.02);
+        }
+      
+        .contact-info {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-top: 20vh;
+          margin-left: 3vw;
+        }
+      
+        .contact-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: #000000;
+          font-size: 14px;
+          text-decoration: none;
+        }
+      
+        .contact-item svg {
+          font-size: 18px;
+          color: #E45310;
+        }
+
+        .nav-button {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: #E45310;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 4vw;
+          height: 4vw;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          z-index: 10;
+          font-weight: bold;
+          font-size: 2.4vw;
+        }
+
+        .nav-button:hover {
+          background-color: #e44d00;
+        }
+
+        .nav-button.left {
+          left: -100px;
+        }
+
+        .nav-button.right {
+          right: -100px;
+        }
+
+        .nav-button svg {
+          font-size: 34px;
+        }
+      `}
+      </style>
+
+      {/* Main container */}
+      <div className="h-screen overflow-hidden font-sans text-gray-800">
+        {/* Header section */}
+        <header
+          onClick={resetView}
+          className="flex justify-between items-start p-6 bg-white border-b-2 border-[#E45310] fixed w-full top-0 z-50 cursor-pointer"
+        >
+          <div className="pl-7 pt-4">
+            <h1 className="text-3xl font-bold text-[#E45310]">
+              Mrugakshi Nadkarni
+            </h1>
+            <p className="text-2xl font-thin text-[#E45310]">
+              Design | Space | Creation | Balance
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-4 text-orange-500 text-xl mt-1 pr-10">
+            <a
+              href="https://instagram.com/mrugakshi18"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FiInstagram />
+            </a>
+            <a href="mailto:mrugakshi18@gmail.com">
+              <FiMail />
+            </a>
+            <a href="tel:9820408075">
+              <FiPhone />
+            </a>
+          </div>
+        </header>
+
+        {/* Main content layout */}
+        <div className="flex pt-[12vh] h-full bg-[#3F3124]">
+          {/* Left section: About or Project Details */}
+          <section className="w-[40%] bg-white p-[2vh] fixed top-[12vh] bottom-0 flex items-center justify-center text-center overflow-hidden hide-scrollbar pt-[6vh]">
+            {selectedProject ? (
+              // Display selected project details and media
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full h-full overflow-y-scroll hide-scrollbar p-4"
+              >
+                <div className="mb-6 mt-6 text-left">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={resetView}
+                      className="bg-[#E45310] text-white rounded-full p-2 hover:bg-[#e44d00] transition-colors"
+                    >
+                      <FaChevronLeft size={20} />
+                    </button>
+                    <h2 className="text-[#E45310] text-2xl font-bold">
+                      {selectedProject.title}
+                    </h2>
+                  </div>
+                  <p className="text-[#E45310] text-md mb-4 mt-2">
+                    {selectedProject.details}
+                  </p>
+                  <div className="flex justify-between text-sm text-gray-700">
+                    <div>
+                      <span className="font-semibold">Production House</span> |{" "}
+                      {selectedProject.productionHouse}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Designation</span> |{" "}
+                      {selectedProject.designation}
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {mediaContent.map((media, index) => (
+                    <motion.div
+                      key={index}
+                      className={`relative w-full ${media.span ? "col-span-2 aspect-video mb-4" : "h-[25vh]"
+                        }`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      {media.type === "video" ? (
+                        <>
+                          <video
+                            src={media.src}
+                            className="w-full h-full rounded-lg shadow-lg object-cover"
+                          />
+                          <div
+                            className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                            onClick={() => {
+                              setSelectedImageIndex(index);
+                              setIsVideoModalOpen(true);
+                            }}
+                          >
+                            <BsPlayCircle className="text-white text-6xl hover:text-orange-500 transition-colors" />
+                          </div>
+                        </>
+                      ) : (
+                        <img
+                          src={media.src}
+                          alt={`Project media ${index + 1}`}
+                          className="w-full h-full rounded-lg shadow-lg object-cover cursor-pointer"
+                          onClick={() => {
+                            setSelectedImageIndex(index);
+                            setIsImageModalOpen(true);
+                          }}
+                        />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              // Display About Me section when no project is selected
+              <div>
+                <h2 className="mt-[7vh] text-2xl font-bold text-[#E45310] mb-6 font-poppins">
+                  Hi! A little about myself,
+                </h2>
+                <p className="text-gray-700 font-medium text-sm leading-relaxed px-10 pt-0 pb-4 font-poppins">
+                  (Based in the heart of architectural wonders) Having an
+                  extensive knowledge and education in architecture I dedicate
+                  my passion to crafting stories through the attention to
+                  spatial detail and understanding of the character narrative.
+                  From concept to completion, I'd like to say I drive the visual
+                  identity of design and space creation. With a combination of
+                  problem-solving balance, technical expertise and artistic
+                  vision I achieve to bring to the table a unique and
+                  captivating visual design stratum.
+                </p>
+                <div className="contact-info ml-8">
+                  <a
+                    href="https://instagram.com/mrugakshi18"
+                    className="contact-item hover:text-orange-500 transition-colors"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FiInstagram /> mrugakshi18
+                  </a>
+                  <a
+                    href="mailto:mrugakshi18@gmail.com"
+                    className="contact-item hover:text-orange-500 transition-colors"
+                  >
+                    <FiMail /> mrugakshi18@gmail.com
+                  </a>
+                  <a
+                    href="tel:9820408075"
+                    className="contact-item hover:text-orange-500 transition-colors"
+                  >
+                    <FiPhone /> 9820408075
+                  </a>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* Middle section: Project Timeline */}
+          <section className="relative w-[25%] ml-[40%] overflow-y-scroll hide-scrollbar bg-[#3F3124] py-0 timeline-section">
+            <div className="vertical-strip"></div>
+            <div className="flex flex-col py-12" style={{ rowGap: "6vw" }}>
+              {sortedProjects.map((project) => (
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  key={project.id}
+                  className="project-item cursor-pointer"
+                  onClick={() => handleProjectClick(project)}
+                >
+                  <div
+                    className={`project-number ${selectedProject?.id === project.id ? "selected" : ""
+                      }`}
+                  >
+                    {String(project.id).padStart(2, "0")}
+                  </div>
+                  <div
+                    className={`project-details ${selectedProject?.id === project.id ? "selected" : ""
+                      }`}
+                  >
+                    <h3 className="text-xl font-semibold mb-1">
+                      {project.title}
+                    </h3>
+                    <p className="text-sm mb-1">{project.date}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* Right section: Project Timeline Heading */}
+          <section className="w-[35%] fixed right-[5vw] top-[0px] bottom-0 text-white px-6 py-0 relative">
+            <div className="flex items-center gap-4">
+              <div className="project-timeline-heading">
+                Project
+                <br />
+                Timeline
+                <p className="text-sm text-white mt-[1vh] font-normal px-[0.5vw]">
+                  Click on any project to get a preview!
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Video Modal */}
+      {isVideoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-[#1A0D00] opacity-90"
+            onClick={() => setIsVideoModalOpen(false)}
+          />
+          <div className="relative w-[80vw] max-w-4xl z-10">
+            <button
+              className="absolute -top-[5vh] right-0 text-white text-2xl hover:text-orange-500 transition-colors"
+              onClick={() => setIsVideoModalOpen(false)}
+            >
+              <AiOutlineClose />
+            </button>
+            <button className="nav-button left" onClick={handlePreviousMedia}>
+              <FaChevronLeft />
+            </button>
+            <button className="nav-button right" onClick={handleNextMedia}>
+              <FaChevronRight />
+            </button>
+            {mediaContent[selectedImageIndex].type === "video" ? (
+              <video
+                src={mediaContent[selectedImageIndex].src}
+                controls
+                autoPlay
+                className="w-full rounded-lg shadow-lg"
+              />
+            ) : (
+              <img
+                src={mediaContent[selectedImageIndex].src}
+                alt={`Selected project media`}
+                className="w-full rounded-lg shadow-lg"
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {isImageModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-[#1A0D00] opacity-90"
+            onClick={() => setIsImageModalOpen(false)}
+          />
+          <div className="relative w-[80vw] max-w-4xl z-10">
+            <button
+              className="absolute -top-[5vh] right-0 text-white text-2xl hover:text-orange-500 transition-colors"
+              onClick={() => setIsImageModalOpen(false)}
+            >
+              <AiOutlineClose />
+            </button>
+            <button className="nav-button left" onClick={handlePreviousMedia}>
+              <FaChevronLeft />
+            </button>
+            <button className="nav-button right" onClick={handleNextMedia}>
+              <FaChevronRight />
+            </button>
+            {mediaContent[selectedImageIndex].type === "video" ? (
+              <video
+                src={mediaContent[selectedImageIndex].src}
+                controls
+                autoPlay
+                className="w-full rounded-lg shadow-lg"
+              />
+            ) : (
+              <img
+                src={mediaContent[selectedImageIndex].src}
+                alt="Selected project media"
+                className="w-full rounded-lg shadow-lg"
+              />
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default App;

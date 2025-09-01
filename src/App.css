@@ -1,0 +1,49 @@
+/* ----------- Global Reset ----------- */
+@import "tailwindcss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    overflow-x: hidden;
+  }
+  
+  /* ----------- Layout Wrapper ----------- */
+  .main-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 100vh;
+  }
+  
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column;
+    }
+  }
+  
+  /* ----------- Vertical Strip ----------- */
+  .vertical-strip {
+    position: fixed;
+    left: 43.2%;
+    top: 0;
+    bottom: 0;
+    width: 6.9vw;
+    height: 100%;
+    background-color: #E45310;
+    z-index: 0;
+    transform: translateX(-50%);
+  }
+  
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column;
+    }
+  }
+  
